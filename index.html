@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Company Expense Tracker</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: #f4f7fa;
+        transition: background-color 0.3s, color 0.3s;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        margin-top: 50px;
+      }
+      .expense-table {
+        margin-top: 30px;
+      }
+      .table th,
+      .table td {
+        text-align: center;
+        vertical-align: middle;
+      }
+      .table {
+        background-color: #ffffff;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .dark-mode {
+        background-color: #2c2c2c;
+        color: #f5f5f5;
+      }
+      .dark-mode .table {
+        background-color: #444;
+        color: white;
+      }
+      .switch {
+        position: absolute;
+        top: 10px;
+        right: 20px;
+      }
+      .clock {
+        font-weight: bold;
+        font-size: 18px;
+        text-align: right;
+      }
+      #companyLogoPreview {
+        max-height: 50px;
+        margin-bottom: 10px;
+      }
+      .form-control,
+      .form-select,
+      .btn {
+        border-radius: 8px;
+      }
+      .form-check-label {
+        font-size: 1rem;
+        color: #333;
+      }
+      .btn-success,
+      .btn-primary,
+      .btn-danger {
+        border-radius: 20px;
+        padding: 10px 20px;
+      }
+      .btn-success {
+        background-color: #28a745;
+        border: none;
+      }
+      .btn-primary {
+        background-color: #007bff;
+        border: none;
+      }
+      .btn-danger {
+        background-color: #dc3545;
+        border: none;
+      }
+      .header-text {
+        font-size: 1.5rem;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Dark Mode Toggle -->
+      <div class="switch">
+        <label class="form-check-label">
+          <input type="checkbox" id="darkModeToggle" class="form-check-input" />
+          Dark Mode
+        </label>
+      </div>
+
+      <!-- Live Clock -->
+      <div class="clock" id="liveClock"></div>
+
+      <h2 class="text-center mb-4 header-text">Company Expense Tracker</h2>
+
+      <!-- Input Section -->
+      <div class="row mb-4">
+        <div class="col-md-4">
+          <label for="companyLogo">Company Logo:</label>
+          <input
+            type="file"
+            id="companyLogo"
+            class="form-control"
+            accept="image/*"
+          />
+          <img id="companyLogoPreview" src="" alt="Logo Preview" />
+        </div>
+        <div class="col-md-4">
+          <label for="companyName">Company Name:</label>
+          <input
+            type="text"
+            id="companyName"
+            class="form-control"
+            placeholder="Enter Company Name"
+          />
+        </div>
+        <div class="col-md-4">
+          <label>Tracking Date:</label>
+          <div class="d-flex">
+            <input type="date" id="startDate" class="form-control me-2" />
+            <input type="date" id="endDate" class="form-control" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Budget Input -->
+      <div class="row">
+        <div class="col-md-6">
+          <label for="totalBudget">Total Budget:</label>
+          <input
+            type="number"
+            id="totalBudget"
+            class="form-control"
+            placeholder="Enter Total Budget"
+            required
+          />
+        </div>
+      </div>
+
+      <!-- Add Expense Form -->
+      <div class="row mt-4">
+        <div class="col-md-3">
+          <label for="expenseAmount">Amount Spent:</label>
+          <input
+            type="number"
+            id="expenseAmount"
+            class="form-control"
+            placeholder="Amount"
+            required
+          />
+        </div>
+        <div class="col-md-3">
+          <label for="expenseCategory">Category:</label>
+          <select id="expenseCategory" class="form-select" required>
+            <!-- <option value="Marketing">Marketing</option>
+            <option value="Employees Salary">Employees Salary</option>
+            <option value="Utilities">Utilities</option>
+            <option value="Miscellaneous">Miscellaneous</option>
+            <option value="Research">Research</option>
+            <option value="Research">Research</option>
+            <option value="Other">Other</option> -->
+            <option value="Marketing">Marketing</option>
+            <option value="Employees Salary">Employees Salary</option>
+            <option value="Utilities">Utilities</option>
+            <option value="Miscellaneous">Miscellaneous</option>
+            <option value="Research & Development">Research & Development</option>
+            <option value="Rent & Facilities">Rent & Facilities</option>
+            <option value="Travel & Accommodation">Travel & Accommodation</option>
+            <option value="Supplies & Equipment">Supplies & Equipment</option>
+            <option value="Software & Subscriptions">Software & Subscriptions</option>
+            <option value="Communication">Communication</option>
+            <option value="Legal & Accounting">Legal & Accounting</option>
+            <option value="Training & Development">Training & Development</option>
+            <option value="Insurance">Insurance</option>
+            <option value="Repairs & Maintenance">Repairs & Maintenance</option>
+            <option value="Sales & Commissions">Sales & Commissions</option>
+            <option value="Meals & Entertainment">Meals & Entertainment</option>
+            <option value="Transportation">Transportation</option>
+            <option value="Bank Charges & Fees">Bank Charges & Fees</option>
+            <option value="Taxes">Taxes</option>
+            <option value="Event Venue & Logistics">Event Venue & Logistics</option>
+            <option value="Event Marketing & Promotion">Event Marketing & Promotion</option>
+            <option value="Event Catering & Refreshments">Event Catering & Refreshments</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label for="expenseDescription">Description:</label>
+          <input
+            type="text"
+            id="expenseDescription"
+            class="form-control"
+            placeholder="Description"
+            required
+          />
+        </div>
+        <div class="col-md-3">
+          <label for="responsiblePerson">Responsible Person:</label>
+          <input
+            type="text"
+            id="responsiblePerson"
+            class="form-control"
+            placeholder="Responsible Person"
+            required
+          />
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-12 text-center">
+          <button id="addExpenseBtn" class="btn btn-success">
+            Add Expense
+          </button>
+        </div>
+      </div>
+
+      <!-- Expense Summary -->
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <h5>Remaining Budget:</h5>
+          <h3 id="remainingBudget" class="text-success">0</h3>
+        </div>
+        <div class="col-md-6">
+          <h5>Total Spent:</h5>
+          <h3 id="totalSpent" class="text-danger">0</h3>
+        </div>
+      </div>
+
+      <!-- Expense Table -->
+      <div class="expense-table">
+        <table id="expenseTable" class="table table-striped">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Amount</th>
+              <th>Description</th>
+              <th>Responsible Person</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <!-- Download Buttons -->
+      <div class="text-center mt-4">
+        <button class="btn btn-primary" onclick="downloadCSV()">
+          Download CSV
+        </button>
+        <button class="btn btn-danger" onclick="downloadPDF()">
+          Download PDF
+        </button>
+      </div>
+    </div>
+
+    <script>
+      let totalBudget = 0;
+      let totalSpent = 0;
+      const expenses = [];
+
+      document
+        .getElementById("darkModeToggle")
+        .addEventListener("change", function () {
+          document.body.classList.toggle("dark-mode", this.checked);
+        });
+
+      function updateClock() {
+        const now = new Date();
+        document.getElementById("liveClock").textContent = now.toLocaleString();
+      }
+      setInterval(updateClock, 1000);
+      updateClock();
+
+      document
+        .getElementById("companyLogo")
+        .addEventListener("change", function (event) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            document.getElementById("companyLogoPreview").src = e.target.result;
+          };
+          reader.readAsDataURL(event.target.files[0]);
+        });
+
+      document.getElementById("addExpenseBtn").addEventListener("click", () => {
+        const amount = parseFloat(
+          document.getElementById("expenseAmount").value
+        );
+        const category = document.getElementById("expenseCategory").value;
+        const description = document.getElementById("expenseDescription").value;
+        const responsiblePerson =
+          document.getElementById("responsiblePerson").value;
+        totalBudget = parseFloat(document.getElementById("totalBudget").value);
+
+        if (
+          !amount ||
+          !category ||
+          !description ||
+          !responsiblePerson ||
+          !totalBudget
+        ) {
+          alert("Please fill in all fields including Total Budget.");
+          return;
+        }
+
+        expenses.push({ amount, category, description, responsiblePerson });
+
+        totalSpent += amount;
+        const remaining = totalBudget - totalSpent;
+        document.getElementById("totalSpent").textContent = totalSpent;
+        document.getElementById("remainingBudget").textContent = remaining;
+
+        const table = document
+          .getElementById("expenseTable")
+          .getElementsByTagName("tbody")[0];
+        const row = table.insertRow();
+        row.innerHTML = `<td>${category}</td><td>${amount}</td><td>${description}</td><td>${responsiblePerson}</td>`;
+      });
+
+      function downloadCSV() {
+        let csv = "Category,Amount,Description,Responsible Person\n";
+        expenses.forEach((expense) => {
+          csv += `${expense.category},${expense.amount},${expense.description},${expense.responsiblePerson}\n`;
+        });
+
+        const link = document.createElement("a");
+        link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
+        link.download = "expenses.csv";
+        link.click();
+      }
+
+      function downloadPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const logoSrc = document.getElementById("companyLogoPreview").src;
+        const companyName =
+          document.getElementById("companyName").value || "Company";
+        const startDate = document.getElementById("startDate").value || "-";
+        const endDate = document.getElementById("endDate").value || "-";
+        const now = new Date().toLocaleString();
+
+        // Border
+        doc.rect(5, 5, 200, 287);
+
+        // Logo
+        if (logoSrc) {
+          doc.addImage(logoSrc, "JPEG", 10, 10, 30, 15);
+        }
+
+        // Company Name
+        doc.setFontSize(14);
+        doc.text(companyName, 45, 18);
+
+        // Generated Date
+        doc.setFontSize(10);
+        doc.text(`Generated: ${now}`, 150, 10);
+
+        // Centered Title and Date
+        doc.setFontSize(16);
+        doc.text("Company Expense Tracker", 105, 40, null, null, "center");
+        doc.setFontSize(12);
+        doc.text(
+          `From ${startDate} To ${endDate}`,
+          105,
+          48,
+          null,
+          null,
+          "center"
+        );
+
+        // Table
+        const tableData = expenses.map((e) => [
+          totalBudget,
+          e.amount,
+          e.category,
+          e.description,
+          e.responsiblePerson,
+        ]);
+
+        doc.autoTable({
+          head: [
+            [
+              "Total Budget",
+              "Amount Spent",
+              "Category",
+              "Description",
+              "Responsible Person",
+            ],
+          ],
+          body: tableData,
+          startY: 55,
+        });
+
+        doc.save("expenses.pdf");
+      }
+    </script>
+  </body>
+</html>
